@@ -1,0 +1,28 @@
+<video id="fromStream" width=100% autoplay></video>
+<script>
+    window.onload = function() {
+        var fromStream = document.querySelector('#fromStream');
+        var retrieveUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
+        if (retrieveUserMedia) {
+            try{
+                retrieveUserMedia.call(navigator || window.navigator, {
+                        video: true
+                    }, function (stream) {
+                        fromStream.src = URL.createObjectURL(stream);
+                    },
+                    function () {
+                        alert('MediaDevice is using by other process');
+                    }
+                );
+            }catch(e){
+                console.error("caught:",e);
+                navigator.mediaDevices.getUserMedia({video:true}).then(function (stream) {
+                    fromStream.srcObject = stream;
+                    fromStream.play();
+                }).catch(function(err){console.log(err)});
+            }
+        } else {
+            alert('getUserMedia() is not supported in your browser');
+        }
+    }
+</script>
